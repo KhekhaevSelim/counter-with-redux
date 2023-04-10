@@ -1,16 +1,14 @@
 import React from 'react';
 import d from "./Display.module.css"
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {RootStateType} from "../../redux/store";
 import {incrementAC, resetAC} from "../../reducers/countReducer";
-import Notification from "../notification/Notification";
+import {useAppDispatch} from '../../costomHooks/useAppDispatch';
 
 const Display = () => {
 
     let count = useSelector<RootStateType, number>(state => state.counter.currentCount)
-
-    let minCount = useSelector<RootStateType, number>(state => state.counter.minValue)
-    let dispatch = useDispatch()
+    let dispatch = useAppDispatch()
 
     const increment = () => {
         dispatch(incrementAC())

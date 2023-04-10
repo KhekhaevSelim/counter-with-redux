@@ -1,24 +1,28 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent} from 'react';
 import s from "./Settings.module.css"
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {closeSettingsAC, setMaxValueAC, setMinValueAC} from "../../reducers/countReducer";
 import {RootStateType} from "../../redux/store";
 import Notification from "../notification/Notification";
+import {useAppDispatch} from "../../costomHooks/useAppDispatch";
+
 const Settings = () => {
     let maxValueFromState = useSelector<RootStateType, number>(state => state.counter.maxValue)
     let minValueFromState = useSelector<RootStateType, number>(state => state.counter.minValue)
     let notification = useSelector<RootStateType, boolean>(state => state.counter.isNotify)
+    let dispatch = useAppDispatch()
 
-    let dispatch = useDispatch()
+
+
     const closeSettings = (value : boolean) => {
         dispatch(closeSettingsAC(value))
     }
 
     const onChangeMaxValue = (e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(setMaxValueAC(e.currentTarget.value))
+        dispatch(setMaxValueAC(+e.currentTarget.value))
     }
     const onChangeMinValue = (e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(setMinValueAC(e.currentTarget.value))
+        dispatch(setMinValueAC(+e.currentTarget.value))
     }
     return (
         <>{
@@ -28,10 +32,10 @@ const Settings = () => {
                 <div className={s.container}>
                     <div className={s.settingsDisplay}>
                         <div className={s.upSet}>
-                            <span>max-value: </span> <input type="text" value={maxValueFromState} onChange={onChangeMaxValue}/>
+                            <span>max-value: </span> <input type="number" value={maxValueFromState} onChange={onChangeMaxValue}/>
                         </div>
                         <div className={s.downSet}>
-                            <span>min-value: </span> <input type="text" value={minValueFromState} onChange={onChangeMinValue}/>
+                            <span>min-value: </span> <input type="number" value={minValueFromState} onChange={onChangeMinValue}/>
                         </div>
                     </div>
                     <div className={s.settingsButton}>

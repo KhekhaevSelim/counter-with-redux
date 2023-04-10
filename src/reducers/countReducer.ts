@@ -1,11 +1,8 @@
+import {AnyAction, Dispatch} from "redux";
+import {ThunkAction} from "redux-thunk";
+import {RootStateType} from "../redux/store";
 
-export type StateType = {
-    currentCount : number,
-    settings : boolean,
-    minValue : number,
-    maxValue : number,
-    isNotify : boolean
-}
+
 const initialState = {
     currentCount : 0,
     settings : false,
@@ -28,11 +25,19 @@ export const countReducer = (state : StateType = initialState, action : CounterA
         case "CLOSE-SETTINGS" :
             return {...state, settings : action.value}
         case "SET-MAX-VALUE":
-            return {...state, maxValue : +action.value}
+            if(+action.value <= state.minValue){
+                return {...state, isNotify : true}
+            } else {
+                return {...state, maxValue : +action.value}
+            }
         case "SET-MIN-VALUE" :
             if(+action.value >= state.maxValue){
               return {...state, isNotify : true}
-            } else {
+            }
+            else if(+action.value < 0 ){
+                return {...state, isNotify : true}
+            }
+            else {
                 return {...state, minValue : +action.value,currentCount : +action.value}
             }
         case "CLOSE-NOTIFY" :
@@ -42,46 +47,23 @@ export const countReducer = (state : StateType = initialState, action : CounterA
     }
 }
 
-export type CounterActionsType = ReturnType<typeof incrementAC> | ReturnType<typeof resetAC>
-| ReturnType<typeof showSettingsAC> | ReturnType<typeof closeSettingsAC> | ReturnType<typeof setMaxValueAC>
-| ReturnType<typeof setMinValueAC> |  ReturnType<typeof closeNotifyAC>
-export const incrementAC = ( ) => {
-    return {
-        type : "INCREMENT"
-    }as const
-}
-export const resetAC = ( ) => {
-    return {
-        type : "RESET"
-    }as const
-}
-export const showSettingsAC = ( value : boolean ) => {
-    return {
-        type : "SHOW-SETTINGS",
-        value
-    }as const
-}
-export const closeSettingsAC = ( value : boolean ) => {
-    return {
-        type : "CLOSE-SETTINGS",
-        value
-    }as const
-}
+// ACTION CREATORS
+export const incrementAC = () => ({type : "INCREMENT"}as const)
+export const resetAC = () => ({type : "RESET"}as const)
+export const showSettingsAC = ( value : boolean ) => ({type : "SHOW-SETTINGS",value}as const)
+export const closeSettingsAC = ( value : boolean ) => ({type : "CLOSE-SETTINGS",value}as const)
+export const setMaxValueAC = ( value : number ) => ({type : "SET-MAX-VALUE",value}as const)
+export const setMinValueAC = ( value : number ) => ({type : "SET-MIN-VALUE",value}as const)
+export const closeNotifyAC = ( ) => ({type : "CLOSE-NOTIFY"}as const)
 
-export const setMaxValueAC = ( value : string ) => {
-    return {
-        type : "SET-MAX-VALUE",
-        value
-    }as const
-}
-export const setMinValueAC = ( value : string ) => {
-    return {
-        type : "SET-MIN-VALUE",
-        value
-    }as const
-}
-export const closeNotifyAC = ( ) => {
-    return {
-        type : "CLOSE-NOTIFY"
-    }as const
-}
+
+// TYPES
+export type CounterActionsType =
+    ReturnType<typeof incrementAC> |
+    ReturnType<typeof resetAC> |
+    ReturnType<typeof showSettingsAC> |
+    ReturnType<typeof closeSettingsAC> |
+    ReturnType<typeof setMaxValueAC> |
+    ReturnType<typeof setMinValueAC> |
+    ReturnType<typeof closeNotifyAC>
+export type StateType = {currentCount : number, settings : boolean, minValue : number, maxValue : number, isNotify : boolean}
